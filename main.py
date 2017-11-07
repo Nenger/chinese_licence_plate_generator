@@ -46,12 +46,12 @@ if __name__ == "__main__":
     current_path = sys.path[0]
 
     #实际输入的车牌应该与以下参数相当
-    world_size = (704, 576)
-    plate_size = (192, 61)
+    world_size = (256, 256)
+    plate_size = (50, 17)
     min_scale = 0.6
     max_scale = 1.0
 
-    need_img_num = 24000
+    need_img_num = 50000
     fake_resource_dir  = current_path + "/fake_resource/" 
     real_resource_dir  = "D:/datasets/real_plate/0926-0968/"
     world_resource_dir = "D:/datasets/SUN397_listed/"
