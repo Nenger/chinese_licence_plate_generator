@@ -101,5 +101,5 @@ def generate_train_set(output_dir, num):
 
 
 if __name__ == "__main__":
-    generate_train_set("E:/plate_data/train/", 40000)
-    generate_train_set("E:/plate_data/validation/",10000)
+    generate_train_set("E:/plate_detect_data/raw_image/train/", 40000)
+    generate_train_set("E:/plate_detect_data/raw_image/validation/",10000)
