@@ -29,8 +29,6 @@ def add_plate_to_world(plate, world, min_scale, max_scale):
     plate = cv2.warpAffine(plate, M, (dst_width, dis_height))
     plate_mask = cv2.warpAffine(plate_mask, M, (dst_width, dis_height))
 
-    #save_random_img("d:/test/", plate)
-
     (p_x, p_y, p_w, p_h) = cv2.boundingRect(plate_mask)
 
     #随机生成车牌出现在场景中的位置
@@ -42,22 +40,22 @@ def add_plate_to_world(plate, world, min_scale, max_scale):
     #返回图像和车牌位置
     return out,  (x + p_x, y + p_y, p_w, p_h)
 
-if __name__ == "__main__":
+def generate_train_set(output_dir, num):
     current_path = sys.path[0]
 
     #实际输入的车牌应该与以下参数相当
-    world_size = (256, 256)
-    plate_size = (50, 17)
-    min_scale = 0.6
+    world_size = (214, 214)
+    plate_size = (60, 21)
+    min_scale = 0.7
     max_scale = 1.0
 
-    need_img_num = 50000
+    need_img_num = num
     fake_resource_dir  = current_path + "/fake_resource/" 
     real_resource_dir  = "D:/datasets/real_plate/0926-0968/"
     world_resource_dir = "D:/datasets/SUN397_listed/"
 
     output_plate_dir = current_path + "/output_plate/"
-    output_world_dir = current_path + "/output_sample/"
+    output_world_dir = output_dir
 
     fake_plate_generator = FakePlateGenerator(fake_resource_dir, plate_size)
     real_plate_generator = RealPlateGenerator(real_resource_dir, plate_size)
@@ -69,16 +67,15 @@ if __name__ == "__main__":
         plate_name = ""
 
         try:
-            if index % 2 == 0:
-                #index += 1
-                #continue
+            if index % 2 != 0:
                 plate, plate_name = real_plate_generator.generate_one_plate()
             else:
                 plate, plate_name = fake_plate_generator.generate_one_plate()
                 plate = jittering_color(plate)
                 plate = add_noise(plate)
-                plate = jittering_blur(plate)
-                plate = jittering_scale(plate)
+                if index %4 == 0:
+                    plate = jittering_blur(plate)
+                    plate = jittering_scale(plate)
 
             plate = jittering_border(plate)
             world = world_generator.generate_one_world()
@@ -101,3 +98,8 @@ if __name__ == "__main__":
 
         index += 1
         print("progress: %04d / %04d"%(index, need_img_num))
+
+
+if __name__ == "__main__":
+    generate_train_set("E:/plate_data/train/", 40000)
+    generate_train_set("E:/plate_data/validation/",10000)

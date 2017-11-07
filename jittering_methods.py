@@ -8,9 +8,9 @@ import cv2
 import uuid
 
 def jittering_blur(img):
-    kernel_list = [3, 5, 7, 11]
+    kernel_list = [3, 5, 7]
     kernel = random.choice(kernel_list)
-    sigma = random.uniform(0, 1.5)
+    sigma = random.uniform(0, 0.5)
     return  cv2.GaussianBlur(img, (kernel,kernel), sigma)   
 
 #随机饱和度, 亮度, 对比度
@@ -44,7 +44,7 @@ def jittering_border(image):
 def jittering_scale(image):
     h, w = image.shape[:2]
 
-    scale = random.uniform(0.3, 1.0)
+    scale = random.uniform(0.8, 1.0)
     scaled_h = int(h*scale)
     scaled_w = int(w*scale) 
     image = cv2.resize(image, (scaled_w, scaled_h), interpolation = cv2.INTER_CUBIC)
