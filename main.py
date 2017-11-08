@@ -44,13 +44,13 @@ def generate_img_set(output_dir, num):
     current_path = sys.path[0]
 
     #实际输入的车牌应该与以下参数相当
-    world_size = (214, 214)
-    plate_size = (60, 21)
-    min_scale = 0.7
+    world_size = (540, 320)
+    plate_size = (80, 25)
+    min_scale = 0.5
     max_scale = 1.0
 
-    real_resource_dir  = "D:/datasets/real_plate/0926-0968/"
-    world_resource_dir = "D:/datasets/SUN397_listed/"
+    real_resource_dir  = "E:/datasets/real_plate/0926-0968/"
+    world_resource_dir = "E:/datasets/SUN397_listed/"
 
     need_img_num = num
     fake_resource_dir  = current_path + "/fake_resource/" 
