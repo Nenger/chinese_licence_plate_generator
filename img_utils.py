@@ -6,6 +6,21 @@ import sys
 import numpy as np
 import cv2
 import uuid
+import shutil
+import time
+
+def reset_folder(path):
+     try:
+         shutil.rmtree(path)
+     except:
+          pass
+    
+     time.sleep(1)     
+     
+     try:
+         os.mkdir(path)
+     except:
+          pass
 
 #图像添加噪声
 def add_noise(img):

@@ -40,7 +40,7 @@ def add_plate_to_world(plate, world, min_scale, max_scale):
     #返回图像和车牌位置
     return out,  (x + p_x, y + p_y, p_w, p_h)
 
-def generate_train_set(output_dir, num):
+def generate_img_set(output_dir, num):
     current_path = sys.path[0]
 
     #实际输入的车牌应该与以下参数相当
@@ -49,11 +49,11 @@ def generate_train_set(output_dir, num):
     min_scale = 0.7
     max_scale = 1.0
 
-    need_img_num = num
-    fake_resource_dir  = current_path + "/fake_resource/" 
     real_resource_dir  = "D:/datasets/real_plate/0926-0968/"
     world_resource_dir = "D:/datasets/SUN397_listed/"
 
+    need_img_num = num
+    fake_resource_dir  = current_path + "/fake_resource/" 
     output_plate_dir = current_path + "/output_plate/"
     output_world_dir = output_dir
 
@@ -101,5 +101,11 @@ def generate_train_set(output_dir, num):
 
 
 if __name__ == "__main__":
-    generate_train_set("E:/plate_detect_data/raw_image/train/", 40000)
-    generate_train_set("E:/plate_detect_data/raw_image/validation/",10000)
+    train_set_dir = "E:/plate_detect_data/raw_image/train/"
+    validation_set_dir = "E:/plate_detect_data/raw_image/validation/"
+
+    reset_folder(train_set_dir)
+    reset_folder(validation_set_dir)
+
+    generate_img_set(train_set_dir, 40000)
+    generate_img_set(validation_set_dir ,10000)
