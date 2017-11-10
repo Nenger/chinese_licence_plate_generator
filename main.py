@@ -85,6 +85,7 @@ def generate_img_set(output_dir, num):
 
             #写文件
             (x, y, width , height) = coordinate
+
             location_str = "_%04d_%04d_%04d_%04d"%(x, y, width , height)
 
             #画车牌位置框
