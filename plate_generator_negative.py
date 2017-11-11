@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import cv2
 
-class RealPlateGenerator():
+class NegativeobjectGenerator():
     def __init__(self, img_dir, dst_size):
         self.current_path = sys.path[0]
 
