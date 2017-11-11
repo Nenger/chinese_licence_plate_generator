@@ -124,8 +124,8 @@ if __name__ == "__main__":
     train_set_dir = "E:/plate_detect_data/raw_image/train/"
     validation_set_dir = "E:/plate_detect_data/raw_image/validation/"
 
-    reset_folder(train_set_dir)
-    reset_folder(validation_set_dir)
+    #reset_folder(train_set_dir)
+    #reset_folder(validation_set_dir)
 
-    generate_img_set(train_set_dir, 15000)
-    #generate_img_set(validation_set_dir ,10000)
+    generate_img_set(train_set_dir, 3000)
+    generate_img_set(validation_set_dir ,3000)
