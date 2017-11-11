@@ -11,8 +11,9 @@ from plate_generator_real import *
 from img_utils import *
 from world_generator import *
 from jittering_methods import *
+from negative_object_generator import*
 
-def add_plate_to_world(plate, world, min_scale, max_scale):
+def add_object_to_world(plate, world, min_scale, max_scale):
     dis_height = plate.shape[0]*4
     dst_width =  plate.shape[1]*2
 
@@ -51,6 +52,7 @@ def generate_img_set(output_dir, num):
 
     real_resource_dir  = "E:/datasets/real_plate/0926-0968/"
     world_resource_dir = "E:/datasets/SUN397_listed/"
+    negative_resource_dir = "E:/datasets/negative_objects/"
 
     need_img_num = num
     fake_resource_dir  = current_path + "/fake_resource/" 
@@ -59,14 +61,28 @@ def generate_img_set(output_dir, num):
 
     fake_plate_generator = FakePlateGenerator(fake_resource_dir, plate_size)
     real_plate_generator = RealPlateGenerator(real_resource_dir, plate_size)
+    negative_object_generator = NegativeobjectGenerator(negative_resource_dir, plate_size)
     world_generator = WorldGenerator(world_resource_dir, world_size)
     
     index = 0
     while index < need_img_num:
-        plate = None
-        plate_name = ""
-
         try:
+            #获得一个world, 也就是背景图
+            world = world_generator.generate_one_world()
+
+            #先向世界加入negative object
+            negative_num = random.randint(0 , 8)
+            for i in range(negative_num):
+                negative_object = negative_object_generator.generate_one_object()
+                negative_object = jittering_color(negative_object)
+                negative_object = jittering_blur(negative_object)
+                negative_object = jittering_scale(negative_object)
+                negative_object = add_noise(negative_object)
+                add_object_to_world(negative_object, world, min_scale, max_scale)
+
+            plate = None
+            plate_name = ""
+
             if index % 2 != 0:
                 plate, plate_name = real_plate_generator.generate_one_plate()
             else:
@@ -78,10 +94,10 @@ def generate_img_set(output_dir, num):
                     plate = jittering_scale(plate)
 
             plate = jittering_border(plate)
-            world = world_generator.generate_one_world()
             
             #车牌放入世界
-            img, coordinate = add_plate_to_world(plate, world, min_scale, max_scale)
+            img, coordinate = add_object_to_world(plate, world, min_scale, max_scale)
+            img = add_noise(img, 2)
 
             #写文件
             (x, y, width , height) = coordinate
@@ -92,7 +108,10 @@ def generate_img_set(output_dir, num):
             #plate_in_world = cv2.rectangle(img, (x, y), (x + width, y + height), (0,255,0), 3)
 
             save_file_name = plate_name + location_str + ".png"
+
+            #记录车牌, 调试用
             #cv2.imwrite(output_plate_dir + save_file_name, plate)
+
             cv2.imwrite(output_world_dir + save_file_name, img)
         except:
             continue
@@ -108,5 +127,5 @@ if __name__ == "__main__":
     reset_folder(train_set_dir)
     reset_folder(validation_set_dir)
 
-    generate_img_set(train_set_dir, 40000)
-    generate_img_set(validation_set_dir ,10000)
+    generate_img_set(train_set_dir, 15000)
+    #generate_img_set(validation_set_dir ,10000)

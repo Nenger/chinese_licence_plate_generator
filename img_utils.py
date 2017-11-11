@@ -23,13 +23,13 @@ def reset_folder(path):
           pass
 
 #图像添加噪声
-def add_noise(img):
+def add_noise(img, strenth = 4):
     #需转换为浮点数才能完成除法
     out = img.astype(np.float64)
     out /= 255.0
 
     #随机添加噪音, 并去掉超过范围的噪音值
-    noise_scale = random.randint(0, 4)/100.0
+    noise_scale = random.randint(0, strenth)/100.0
     out += np.random.normal(scale=noise_scale, size=out.shape)
     out = np.clip(out, 0., 1.)
 

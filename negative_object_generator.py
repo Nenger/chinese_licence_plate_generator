@@ -30,16 +30,9 @@ class NegativeobjectGenerator():
             #此时按殊勋读取, 不采取随机选取
             file_name = self.img_list[self.current_index]
 
-            if len(file_name) != 11:
-                continue
-
             file_full_path = self.img_dir + file_name
 
-            img = cv2.imdecode(np.fromfile(file_full_path, dtype=np.uint8), -1)
+            img = cv2.imread(file_full_path)
             img = cv2.resize(img, self.dst_size, interpolation = cv2.INTER_CUBIC)
-            
-            #中文名转换为对应的index
-            key = file_name[0]
-            name = self.chinese_map[key] + file_name[1:-4]
 
-            return img, name
+            return img
