@@ -21,22 +21,8 @@ class NegativeobjectGenerator():
         self.dst_size = dst_size
 
         self.current_index = 0
-
-        #为方便, 文件名中不使用中文, 此处读取省份简写与数字的对应关系, 与假车牌保持一致
-        self.chinese_map = {}
-        with open(self.current_path + "\chinese_map.txt", 'rb') as f:
-            lines = f.readlines()
-            first = True
-            for line in lines:
-                if first:
-                    #第一行忽略
-                    first = False
-                    continue
-                else:
-                    data = line.decode('utf-8')
-                    self.chinese_map[data[0]] = data[3:5]  #!!!!
        
-    def generate_one_plate(self):
+    def generate_one_object(self):
         while(True):
             self.current_index += 1
             self.current_index %= self.img_num
