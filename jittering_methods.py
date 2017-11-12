@@ -44,7 +44,7 @@ def jittering_border(image):
 def jittering_scale(image):
     h, w = image.shape[:2]
 
-    scale = random.uniform(0.6, 1.0)
+    scale = random.uniform(0.5, 1.0)
     scaled_h = int(h*scale)
     scaled_w = int(w*scale) 
     image = cv2.resize(image, (scaled_w, scaled_h), interpolation = cv2.INTER_CUBIC)

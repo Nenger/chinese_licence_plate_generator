@@ -55,8 +55,8 @@ def generate_img_set(output_dir, num):
     #实际输入的车牌应该与以下参数相当
     world_size = (540, 320)
     plate_size = (100, 30)
-    min_scale = 0.4
-    max_scale = 1.0
+    min_scale = 0.3
+    max_scale = 0.8
 
     real_resource_dir  = "E:/datasets/real_plate/0926-0968/"
     world_resource_dir = "E:/datasets/SUN397_listed/"
