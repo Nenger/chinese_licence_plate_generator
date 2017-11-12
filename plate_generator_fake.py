@@ -96,8 +96,11 @@ class FakePlateGenerator():
 
         #转换为RBG三通道
         plate_img = cv2.cvtColor(plate_img, cv2.COLOR_BGRA2BGR)
-
+  
          #转换到目标大小
-        plate_img = cv2.resize(plate_img, self.dst_size, interpolation = cv2.INTER_CUBIC)
+        plate_img = cv2.resize(plate_img, self.dst_size, interpolation = cv2.INTER_AREA)
+
+        #记录车牌, 调试用
+        #save_random_img(sys.path[0] + "/output_plate_mini/", plate_img)
 
         return plate_img, plate_name

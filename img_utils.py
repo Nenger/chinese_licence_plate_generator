@@ -103,10 +103,10 @@ def make_affine_transform(from_shape, to_shape,
         #生成一个随机scale 
         scale = random.uniform(min_scale, max_scale)
                             
-        #三个轴的随机旋转
-        roll = random.uniform(-0.3, 0.3) * rotation_variation
-        pitch = random.uniform(-0.7, 0.7) * rotation_variation   #数值方向的倾斜
-        yaw = random.uniform(-0.2, 0.2) * rotation_variation
+        #三个轴的随机旋转, 数值对应弧度
+        roll =  random.uniform(-0.2, 0.2) * rotation_variation      #绕着车牌中心旋转
+        pitch = random.uniform(-0.7, 0.7) * rotation_variation     #沿着水平中轴翻转
+        yaw =   random.uniform(-0.3, 0.3) * rotation_variation     #沿着树脂中走翻转
 
         # Compute a bounding box on the skewed input image (`from_shape`).
         M = euler_to_mat(yaw, pitch, roll)[:2, :2]

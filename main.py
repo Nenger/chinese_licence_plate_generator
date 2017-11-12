@@ -30,6 +30,10 @@ def add_object_to_world(plate, world, min_scale, max_scale):
     plate = cv2.warpAffine(plate, M, (dst_width, dis_height))
     plate_mask = cv2.warpAffine(plate_mask, M, (dst_width, dis_height))
 
+    #存储变换后的图片
+    #save_random_img(sys.path[0] + "/output_plate_affine/", plate)
+    #save_random_img(sys.path[0] + "/output_plate_affine_mask/", plate_mask)
+
     (p_x, p_y, p_w, p_h) = cv2.boundingRect(plate_mask)
 
     #随机生成车牌出现在场景中的位置
@@ -38,7 +42,7 @@ def add_object_to_world(plate, world, min_scale, max_scale):
 
     out = overlay_img(plate, world, plate_mask, x, y)
 
-    #返回图像和车牌位置
+    #返回图像和车牌位置     
     return out,  (x + p_x, y + p_y, p_w, p_h)
 
 def generate_img_set(output_dir, num):
@@ -56,19 +60,30 @@ def generate_img_set(output_dir, num):
 
     need_img_num = num
     fake_resource_dir  = current_path + "/fake_resource/" 
-    output_plate_dir = current_path + "/output_plate/"
+    empty_world_dir = current_path + "/empty_world/"
     output_world_dir = output_dir
+
+    #中间调试文件
+    reset_folder(sys.path[0] + "/output_plate_affine/")
+    reset_folder(sys.path[0] + "/output_plate_affine_mask/")
+    reset_folder(sys.path[0] + "/output_plate/")
 
     fake_plate_generator = FakePlateGenerator(fake_resource_dir, plate_size)
     real_plate_generator = RealPlateGenerator(real_resource_dir, plate_size)
     negative_object_generator = NegativeobjectGenerator(negative_resource_dir, plate_size)
-    world_generator = WorldGenerator(world_resource_dir, world_size)
+    world_generator = WorldGenerator(world_resource_dir, empty_world_dir, world_size)
     
     index = 0
     while index < need_img_num:
         try:
+            empty_world = False
+
             #获得一个world, 也就是背景图
-            world = world_generator.generate_one_world()
+            if index % 30 != 0:
+               world = world_generator.generate_one_world()
+            else:
+               world = world_generator.generator_empty_world()
+               empty_world = True
 
             #先向世界加入negative object
             negative_num = random.randint(0 , 8)
@@ -87,13 +102,12 @@ def generate_img_set(output_dir, num):
                 plate, plate_name = real_plate_generator.generate_one_plate()
             else:
                 plate, plate_name = fake_plate_generator.generate_one_plate()
-                plate = jittering_color(plate)
+                if not empty_world:
+                    plate = jittering_color(plate)
                 plate = add_noise(plate)
                 if index %4 == 0:
                     plate = jittering_blur(plate)
                     plate = jittering_scale(plate)
-
-            plate = jittering_border(plate)
             
             #车牌放入世界
             img, coordinate = add_object_to_world(plate, world, min_scale, max_scale)
@@ -108,10 +122,6 @@ def generate_img_set(output_dir, num):
             #plate_in_world = cv2.rectangle(img, (x, y), (x + width, y + height), (0,255,0), 3)
 
             save_file_name = plate_name + location_str + ".png"
-
-            #记录车牌, 调试用
-            #cv2.imwrite(output_plate_dir + save_file_name, plate)
-
             cv2.imwrite(output_world_dir + save_file_name, img)
         except:
             continue
@@ -124,8 +134,8 @@ if __name__ == "__main__":
     train_set_dir = "E:/plate_detect_data/raw_image/train/"
     validation_set_dir = "E:/plate_detect_data/raw_image/validation/"
 
-    #reset_folder(train_set_dir)
-    #reset_folder(validation_set_dir)
+    reset_folder(train_set_dir)
+    reset_folder(validation_set_dir)
 
     generate_img_set(train_set_dir, 3000)
     generate_img_set(validation_set_dir ,3000)
