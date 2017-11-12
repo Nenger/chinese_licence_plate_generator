@@ -24,15 +24,19 @@ def add_object_to_world(plate, world, min_scale, max_scale):
                                 rotation_variation=1.0,
                                 translation_variation=1.2)
 
-    plate_mask =  np.ones(plate.shape[:2], dtype=np.uint8)*255                           
+    plate_mask =  np.ones(plate.shape[:2], dtype=np.uint8)*255  
+    #save_random_img(sys.path[0] + "/output_plate_mask/", plate_mask)                         
 
     #mask是用于与场景融合, 注意这里约束了车牌变换后的尺寸, 需修改  
     plate = cv2.warpAffine(plate, M, (dst_width, dis_height))
     plate_mask = cv2.warpAffine(plate_mask, M, (dst_width, dis_height))
 
+    #将plate_mask二值化, 灰色部分设置为0
+    #0还是0 255还是255  中间的设置为0
+    ret, plate_mask = cv2.threshold(plate_mask, 253, 255, cv2.THRESH_BINARY)  
+
     #存储变换后的图片
-    #save_random_img(sys.path[0] + "/output_plate_affine/", plate)
-    #save_random_img(sys.path[0] + "/output_plate_affine_mask/", plate_mask)
+    save_random_img(sys.path[0] + "/output_plate_affine_mask/", plate_mask)
 
     (p_x, p_y, p_w, p_h) = cv2.boundingRect(plate_mask)
 
@@ -67,6 +71,7 @@ def generate_img_set(output_dir, num):
     reset_folder(sys.path[0] + "/output_plate_affine/")
     reset_folder(sys.path[0] + "/output_plate_affine_mask/")
     reset_folder(sys.path[0] + "/output_plate/")
+    reset_folder(sys.path[0] + "/output_plate_mask/")
 
     fake_plate_generator = FakePlateGenerator(fake_resource_dir, plate_size)
     real_plate_generator = RealPlateGenerator(real_resource_dir, plate_size)
@@ -105,9 +110,8 @@ def generate_img_set(output_dir, num):
                 if not empty_world:
                     plate = jittering_color(plate)
                 plate = add_noise(plate)
-                if index %4 == 0:
-                    plate = jittering_blur(plate)
-                    plate = jittering_scale(plate)
+                plate = jittering_blur(plate)
+                plate = jittering_scale(plate)
             
             #车牌放入世界
             img, coordinate = add_object_to_world(plate, world, min_scale, max_scale)

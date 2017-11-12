@@ -54,6 +54,8 @@ def overlay_img(fg, bg, mask, x, y):
     # 将透明的那部分, 用背景填充
     # Now black-out the area of logo in ROI
     img1_bg = cv2.bitwise_and(roi, roi, mask = mask_inv) ##
+
+    
     #将前景logo部分,从logoimage中取出, 而其他部分值为0
     # Take only region of logo from logo image.
     img2_fg = cv2.bitwise_and(fg, fg, mask = mask)
