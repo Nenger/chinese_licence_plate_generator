@@ -6,8 +6,8 @@ import sys
 import numpy as np
 import cv2
 
-from plate_generator_fake import *
-from plate_generator_real import *
+from fake_plate_generator import *
+from real_plate_generator import *
 from img_utils import *
 from world_generator import *
 from jittering_methods import *
