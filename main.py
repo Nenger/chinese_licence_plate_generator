@@ -54,8 +54,8 @@ def generate_img_set(output_dir, num):
 
     #实际输入的车牌应该与以下参数相当
     world_size = (540, 320)
-    plate_size = (80, 25)
-    min_scale = 0.5
+    plate_size = (100, 30)
+    min_scale = 0.4
     max_scale = 1.0
 
     real_resource_dir  = "E:/datasets/real_plate/0926-0968/"
@@ -113,9 +113,14 @@ def generate_img_set(output_dir, num):
                 plate = jittering_blur(plate)
                 plate = jittering_scale(plate)
             
+            plate = jittering_border(plate)
+
             #车牌放入世界
             img, coordinate = add_object_to_world(plate, world, min_scale, max_scale)
             img = add_noise(img, 2)
+
+            if empty_world:
+                img = jittering_color(img)
 
             #写文件
             (x, y, width , height) = coordinate
