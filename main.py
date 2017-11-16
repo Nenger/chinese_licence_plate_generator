@@ -13,7 +13,7 @@ from world_generator import *
 from jittering_methods import *
 from negative_object_generator import*
 
-#将一个前景该物体添加到场景中
+#add an object to the world 
 def add_object_to_world(plate, world, min_scale, max_scale):
     dis_height = plate.shape[0]*4
     dst_width =  plate.shape[1]*2
@@ -31,9 +31,6 @@ def add_object_to_world(plate, world, min_scale, max_scale):
 
     #将plate_mask二值化, 灰色部分设置为0
     ret, plate_mask = cv2.threshold(plate_mask, 253, 255, cv2.THRESH_BINARY)  
-
-    #存储变换后的图片
-    save_random_img(sys.path[0] + "/output_plate_affine_mask/", plate_mask)
 
     (p_x, p_y, p_w, p_h) = cv2.boundingRect(plate_mask)
 
@@ -61,12 +58,6 @@ def generate_img_set(output_dir, need_img_num,  real_resource_dir, world_resourc
     fake_resource_dir  = current_path + "/fake_resource/" 
     empty_world_dir = current_path + "/empty_world/"
     output_world_dir = output_dir
-
-    #中间调试文件
-    reset_folder(sys.path[0] + "/output_plate_affine/")
-    reset_folder(sys.path[0] + "/output_plate_affine_mask/")
-    reset_folder(sys.path[0] + "/output_plate/")
-    reset_folder(sys.path[0] + "/output_plate_mask/")
 
     fake_plate_generator = FakePlateGenerator(fake_resource_dir, plate_size)
     real_plate_generator = RealPlateGenerator(real_resource_dir, plate_size)
@@ -110,18 +101,18 @@ def generate_img_set(output_dir, need_img_num,  real_resource_dir, world_resourc
             
             plate = jittering_border(plate)
 
-            #车牌放入场景
+            #add plate or negative objects to world
             img, coordinate = add_object_to_world(plate, world, min_scale, max_scale)
             img = add_noise(img, 2)
 
             if empty_world:
                 img = jittering_color(img)
 
-            #写文件
+            #format output file name
             (x, y, width , height) = coordinate
             location_str = "_%04d_%04d_%04d_%04d"%(x, y, width, height)
 
-            #画车牌位置框
+            #draw rect for debug
             #plate_in_world = cv2.rectangle(img, (x, y), (x + width, y + height), (0,255,0), 3)
 
             save_file_name = plate_name + location_str + ".png"
@@ -134,17 +125,22 @@ def generate_img_set(output_dir, need_img_num,  real_resource_dir, world_resourc
 
 if __name__ == "__main__":
     for_demostrate = True
+    current_path = sys.path[0]
 
     if for_demostrate:
-        train_set_output_dir = "E:/plate_detect_data/raw_image/train/"
-        validation_set_output__dir = "E:/plate_detect_data/raw_image/validation/"
+        train_set_output_dir = current_path + "/demo_output/train/"
+        validation_set_output_dir = current_path + "/demo_output/train/"
 
-        real_resource_dir  = "E:/datasets/real_plate/0926-0968/"
-        world_resource_dir = "E:/datasets/SUN397_listed/"
-        negative_resource_dir = "E:/datasets/negative_objects/"
+        reset_folder(train_set_output_dir)
+        reset_folder(validation_set_output_dir)
+
+        #你需要向这些数据集中添加更多的文件
+        real_resource_dir  = current_path + "/demo_datasets/real_plate/"
+        world_resource_dir = current_path + "/demo_datasets/SUN397_listed/"
+        negative_resource_dir = current_path + "/demo_datasets/negative_objects/"
     else:
         train_set_output_dir = "E:/plate_detect_data/raw_image/train/"
-        validation_set_output__dir = "E:/plate_detect_data/raw_image/validation/"
+        validation_set_output_dir = "E:/plate_detect_data/raw_image/validation/"
 
         real_resource_dir  = "E:/datasets/real_plate/0926-0968/"
         world_resource_dir = "E:/datasets/SUN397_listed/"
@@ -154,4 +150,4 @@ if __name__ == "__main__":
     reset_folder(validation_set_output__dir)
 
     generate_img_set(train_set_output_dir, 3000, real_resource_dir, world_resource_dir, negative_resource_dir)
-    generate_img_set(validation_set_output__dir ,3000, real_resource_dir, world_resource_dir, negative_resource_dir)
+    generate_img_set(validation_set_output_dir ,3000, real_resource_dir, world_resource_dir, negative_resource_dir)
