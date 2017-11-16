@@ -15,7 +15,6 @@ class FakePlateGenerator():
         letter_dir = fake_resource_dir + "/letters/" 
         plate_dir = fake_resource_dir + "/plate_background_use/"
 
-         #缩放是通过控制y方向的像素值, 因为各个个字符宽度是不同的(比如I的宽度就很小)
         character_y_size = 113
         plate_y_size = 164
 
@@ -25,19 +24,20 @@ class FakePlateGenerator():
         self.numbers = self.load_image(number_dir, character_y_size)
         self.letters = self.load_image(letter_dir, character_y_size)
 
-        #合并字典
         self.numbers_and_letters = dict(self.numbers, **self.letters)
 
-        #为简化工作,当前只使用蓝牌,如果要加入其他颜色牌照,文字颜色需调整
+        #we only use blue plate here
         self.plates = self.load_image(plate_dir, plate_y_size)
     
-        #车牌背景转换为RGBA便于与RGBA格式的图片叠加
         for i in self.plates.keys():
             self.plates[i] = cv2.cvtColor(self.plates[i], cv2.COLOR_BGR2BGRA)
 
-        #每个字符在车牌中的x坐标
-        self.character_position_x_list_part_1 = [43, 111]                   #"苏A" 这两个字符
-        self.character_position_x_list_part_2 = [205, 269, 330, 395, 464]   #后面的五个字符
+        #take "苏A xxxxx" for example
+
+        #position for "苏A"
+        self.character_position_x_list_part_1 = [43, 111]  
+        #position for "xxxxx"              
+        self.character_position_x_list_part_2 = [205, 269, 330, 395, 464]
     
     def get_radom_sample(self, data):
         keys = list(data.keys())
@@ -99,8 +99,5 @@ class FakePlateGenerator():
   
         #转换到目标大小
         plate_img = cv2.resize(plate_img, self.dst_size, interpolation = cv2.INTER_AREA)
-
-        #记录车牌, 调试用
-        #save_random_img(sys.path[0] + "/output_plate_mini/", plate_img)
 
         return plate_img, plate_name

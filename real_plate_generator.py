@@ -6,7 +6,6 @@ import sys
 import numpy as np
 import cv2
 
-#读取真实的车牌图片
 class RealPlateGenerator():
     def __init__(self, img_dir, dst_size):
         self.current_path = sys.path[0]
@@ -15,7 +14,6 @@ class RealPlateGenerator():
         self.img_dir = img_dir
         self.img_list = os.listdir(self.img_dir)
 
-        #打乱次序
         random.shuffle(self.img_list)
 
         self.img_num = len(self.img_list)
@@ -23,7 +21,7 @@ class RealPlateGenerator():
 
         self.current_index = 0
 
-        #为方便, 文件名中不使用中文, 此处读取省份简写与数字的对应关系, 与假车牌保持一致
+        #map chinese character to a index
         self.chinese_map = {}
         with open(self.current_path + "\chinese_map.txt", 'rb') as f:
             lines = f.readlines()

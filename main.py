@@ -13,45 +13,41 @@ from world_generator import *
 from jittering_methods import *
 from negative_object_generator import*
 
-#add an object to the world 
-def add_object_to_world(plate, world, min_scale, max_scale):
-    dis_height = plate.shape[0]*4
-    dst_width =  plate.shape[1]*2
+#add an object to the world(background)
+def add_object_to_world(object, world, min_scale, max_scale):
+    dis_height = object.shape[0]*4
+    dst_width =  object.shape[1]*2
 
-    M = make_affine_transform( from_shape=plate.shape,
+    M = make_affine_transform( from_shape=object.shape,
                                 to_shape=(dis_height, dst_width),
                                 min_scale=min_scale,
                                 max_scale=max_scale)
 
-    plate_mask =  np.ones(plate.shape[:2], dtype=np.uint8)*255                       
+    object_mask =  np.ones(object.shape[:2], dtype=np.uint8)*255                       
 
-    #mask是用于与场景融合, 注意这里约束了车牌变换后的尺寸, 需修改  
-    plate = cv2.warpAffine(plate, M, (dst_width, dis_height))
-    plate_mask = cv2.warpAffine(plate_mask, M, (dst_width, dis_height))
+    object = cv2.warpAffine(object, M, (dst_width, dis_height))
+    object_mask = cv2.warpAffine(object_mask, M, (dst_width, dis_height))
 
-    #将plate_mask二值化, 灰色部分设置为0
-    ret, plate_mask = cv2.threshold(plate_mask, 253, 255, cv2.THRESH_BINARY)  
+    #set all the pixels to 0 or 1
+    ret, object_mask = cv2.threshold(object_mask, 253, 255, cv2.THRESH_BINARY)  
+    (p_x, p_y, p_w, p_h) = cv2.boundingRect(object_mask)
 
-    (p_x, p_y, p_w, p_h) = cv2.boundingRect(plate_mask)
+    #get a random position to put the object in
+    x = random.randint(0, world.shape[1] - object.shape[1])
+    y = random.randint(0, world.shape[0] - object.shape[0])
 
-    #随机生成车牌出现在场景中的位置
-    x = random.randint(0, world.shape[1] - plate.shape[1])
-    y = random.randint(0, world.shape[0] - plate.shape[0])
+    object_in_world = overlay_img(object, world, object_mask, x, y)
 
-    out = overlay_img(plate, world, plate_mask, x, y)
+    return object_in_world,  (x + p_x, y + p_y, p_w, p_h)
 
-    #返回图像和车牌位置     
-    return out,  (x + p_x, y + p_y, p_w, p_h)
-
-#生成一个数据集
 def generate_img_set(output_dir, need_img_num,  real_resource_dir, world_resource_dir, negative_resource_dir):
     current_path = sys.path[0]
 
-    #实际输入的车牌应该与以下参数相当
+    #the image size and plate size we wanted
     world_size = (540, 320)
     plate_size = (100, 30)
 
-    #随机生成车牌尺寸以达到覆盖multiscale的目的
+    #get plate size in random scale
     min_scale = 0.3
     max_scale = 0.8
 
@@ -69,14 +65,14 @@ def generate_img_set(output_dir, need_img_num,  real_resource_dir, world_resourc
         try:
             empty_world = False
 
-            #获得一个world, 也就是背景图
+            #get a background image, I called it 'world' here
             if index % 30 != 0:
                world = world_generator.generate_one_world()
             else:
                world = world_generator.generator_empty_world()
                empty_world = True
 
-            #随机向场景中加入negative object
+            #add some negative objects to the world
             negative_num = random.randint(0 , 8)
             for i in range(negative_num):
                 negative_object = negative_object_generator.generate_one_object()
@@ -134,11 +130,12 @@ if __name__ == "__main__":
         reset_folder(train_set_output_dir)
         reset_folder(validation_set_output_dir)
 
-        #你需要向这些数据集中添加更多的文件
+        #you need add more images to these folders
         real_resource_dir  = current_path + "/demo_datasets/real_plate/"
         world_resource_dir = current_path + "/demo_datasets/SUN397_listed/"
         negative_resource_dir = current_path + "/demo_datasets/negative_objects/"
     else:
+        #ignore this branch
         train_set_output_dir = "E:/plate_detect_data/raw_image/train/"
         validation_set_output_dir = "E:/plate_detect_data/raw_image/validation/"
 

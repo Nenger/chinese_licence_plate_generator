@@ -22,13 +22,10 @@ def reset_folder(path):
      except:
           pass
 
-#图像添加噪声
 def add_noise(img, strenth = 4):
-    #需转换为浮点数才能完成除法
     out = img.astype(np.float64)
     out /= 255.0
 
-    #随机添加噪音, 并去掉超过范围的噪音值
     noise_scale = random.randint(0, strenth)/100.0
     out += np.random.normal(scale=noise_scale, size=out.shape)
     out = np.clip(out, 0., 1.)
@@ -39,7 +36,6 @@ def add_noise(img, strenth = 4):
 
     return out
 
-#叠加rgba图添加到背景中
 def overlay_img(fg, bg, mask, x, y):
     h_fg, w_fg = fg.shape[:2]
 
@@ -48,15 +44,11 @@ def overlay_img(fg, bg, mask, x, y):
 
     roi = bg[y:end_y, x:end_x]
 
-    #求得logo的二值图和反二值图
     mask_inv = cv2.bitwise_not(mask)
 
-    # 将透明的那部分, 用背景填充
     # Now black-out the area of logo in ROI
     img1_bg = cv2.bitwise_and(roi, roi, mask = mask_inv) ##
 
-    
-    #将前景logo部分,从logoimage中取出, 而其他部分值为0
     # Take only region of logo from logo image.
     img2_fg = cv2.bitwise_and(fg, fg, mask = mask)
 
@@ -90,8 +82,7 @@ def euler_to_mat(yaw, pitch, roll):
 
     return M
 
-#涉及尺度和姿态, 关乎样本的覆盖率
-#使用透视变换才是更合理的方案
+#perspective transfor is better
 def make_affine_transform(from_shape, to_shape, 
                         min_scale, max_scale):
     from_size = np.array([[from_shape[1], from_shape[0]]]).T
@@ -99,14 +90,11 @@ def make_affine_transform(from_shape, to_shape,
 
     M = None
     while True:
-        #uniform() 方法将随机生成下一个实数，它在 [x, y) 范围内。
-        #生成一个随机scale 
         scale = random.uniform(min_scale, max_scale)
                             
-        #三个轴的随机旋转, 数值对应弧度
-        roll =  random.uniform(-0.2, 0.2)     #绕着车牌中心旋转
-        pitch = random.uniform(-0.7, 0.7)     #沿着水平中轴翻转
-        yaw =   random.uniform(-0.3, 0.3)     #沿着竖直方向中轴翻转
+        roll =  random.uniform(-0.2, 0.2)  
+        pitch = random.uniform(-0.7, 0.7)   
+        yaw =   random.uniform(-0.3, 0.3)  
 
         # Compute a bounding box on the skewed input image (`from_shape`).
         M = euler_to_mat(yaw, pitch, roll)[:2, :2]
