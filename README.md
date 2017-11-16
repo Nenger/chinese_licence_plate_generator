@@ -17,7 +17,7 @@ There are two kinds of world image:
 I used only blue image for blue plate, yellow and white image could be added. 
 2 Random image from some big datasets
  
-## Third stage: Add objects to world
+## Third Stage: Add objects to world
 I add some negative objects for hard nagative mining, and adds only one plate to one world. I put the position of the plate relative to the world in the image file name. You can read the position from the image file name as ground truth.
  
 ## Here are some examples:
