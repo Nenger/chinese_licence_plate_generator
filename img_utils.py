@@ -93,9 +93,7 @@ def euler_to_mat(yaw, pitch, roll):
 #涉及尺度和姿态, 关乎样本的覆盖率
 #使用透视变换才是更合理的方案
 def make_affine_transform(from_shape, to_shape, 
-                        min_scale, max_scale,
-                        rotation_variation=1.0,
-                        translation_variation=1.0):
+                        min_scale, max_scale):
     from_size = np.array([[from_shape[1], from_shape[0]]]).T
     to_size = np.array([[to_shape[1], to_shape[0]]]).T
 
@@ -106,9 +104,9 @@ def make_affine_transform(from_shape, to_shape,
         scale = random.uniform(min_scale, max_scale)
                             
         #三个轴的随机旋转, 数值对应弧度
-        roll =  random.uniform(-0.2, 0.2) * rotation_variation      #绕着车牌中心旋转
-        pitch = random.uniform(-0.7, 0.7) * rotation_variation     #沿着水平中轴翻转
-        yaw =   random.uniform(-0.3, 0.3) * rotation_variation     #沿着树脂中走翻转
+        roll =  random.uniform(-0.2, 0.2)     #绕着车牌中心旋转
+        pitch = random.uniform(-0.7, 0.7)     #沿着水平中轴翻转
+        yaw =   random.uniform(-0.3, 0.3)     #沿着竖直方向中轴翻转
 
         # Compute a bounding box on the skewed input image (`from_shape`).
         M = euler_to_mat(yaw, pitch, roll)[:2, :2]
@@ -123,7 +121,7 @@ def make_affine_transform(from_shape, to_shape,
         scale *= np.min(to_size / skewed_size)
 
         # Set the translation such that the skewed and scaled image falls within the output shape bounds
-        trans = (np.random.random((2,1)) - 0.5) * translation_variation
+        trans = (np.random.random((2,1)) - 0.5)
         trans = ((2.0 * trans) ** 5.0) / 2.0
         if np.any(trans < -0.5) or np.any(trans > 0.5):
             continue

@@ -4,10 +4,9 @@ import os
 import random
 import sys
 import numpy as np
-
 import cv2
-import numpy
 
+#基于某个大数据集生成随机场景
 class  WorldGenerator():
     def __init__(self, img_dir, empty_dir, world_size):
         self.output_shape = world_size

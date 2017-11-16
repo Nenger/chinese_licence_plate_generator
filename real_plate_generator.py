@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import cv2
 
+#读取真实的车牌图片
 class RealPlateGenerator():
     def __init__(self, img_dir, dst_size):
         self.current_path = sys.path[0]
