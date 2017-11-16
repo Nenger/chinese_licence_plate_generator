@@ -124,16 +124,13 @@ if __name__ == "__main__":
     current_path = sys.path[0]
 
     if for_demostrate:
-        train_set_output_dir = current_path + "/demo_output/train/"
-        validation_set_output_dir = current_path + "/demo_output/train/"
-
-        reset_folder(train_set_output_dir)
-        reset_folder(validation_set_output_dir)
+        train_set_output_dir = current_path + "/demo_output_train/"
+        validation_set_output_dir = current_path + "/demo_output_train/"
 
         #you need add more images to these folders
-        real_resource_dir  = current_path + "/demo_datasets/real_plate/"
-        world_resource_dir = current_path + "/demo_datasets/SUN397_listed/"
-        negative_resource_dir = current_path + "/demo_datasets/negative_objects/"
+        real_resource_dir  = current_path + "/demo_data_sets/real_plate/"
+        world_resource_dir = current_path + "/demo_data_sets/SUN397_listed/"
+        negative_resource_dir = current_path + "/demo_data_sets/negative_objects/"
     else:
         #ignore this branch
         train_set_output_dir = "E:/plate_detect_data/raw_image/train/"
@@ -144,7 +141,7 @@ if __name__ == "__main__":
         negative_resource_dir = "E:/datasets/negative_objects/" 
 
     reset_folder(train_set_output_dir)
-    reset_folder(validation_set_output__dir)
+    reset_folder(validation_set_output_dir)
 
     generate_img_set(train_set_output_dir, 3000, real_resource_dir, world_resource_dir, negative_resource_dir)
     generate_img_set(validation_set_output_dir ,3000, real_resource_dir, world_resource_dir, negative_resource_dir)
