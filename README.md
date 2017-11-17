@@ -20,6 +20,10 @@ I used only blue image for blue plate, yellow and white image could be added.
 ## Third Stage: Add objects to world
 I add some negative objects for hard nagative mining, and adds only one plate to one world. I put the position of the plate relative to the world in the image file name. You can read the position from the image file name as ground truth.
  
+##Prerequisites
+I used Python 3.5.2 (from Anaconda 4.2.0)
+python-opencv 3.1
+
 ## Here are some examples:
  ![excmple](https://raw.githubusercontent.com/Nenger/chinese_licence_plate_generator/master/demo_output_train/01a7ml54_0091_0078_0082_0039.png)
  ![excmple](https://raw.githubusercontent.com/Nenger/chinese_licence_plate_generator/master/demo_output_train/16D9170D_0074_0163_0129_0053.png)
