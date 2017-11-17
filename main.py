@@ -120,10 +120,10 @@ def generate_img_set(output_dir, need_img_num,  real_resource_dir, world_resourc
         print("progress: %04d / %04d"%(index, need_img_num))
 
 if __name__ == "__main__":
-    for_demostrate = True
     current_path = sys.path[0]
 
-    if for_demostrate:
+    if 'NENGER_PC' not in os.environ.keys():
+        #this is demo environment
         train_set_output_dir = current_path + "/demo_output_train/"
         validation_set_output_dir = current_path + "/demo_output_train/"
 
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         world_resource_dir = current_path + "/demo_data_sets/SUN397_listed/"
         negative_resource_dir = current_path + "/demo_data_sets/negative_objects/"
     else:
-        #ignore this branch
+        #ignore this branch, this is my environment
         train_set_output_dir = "E:/plate_detect_data/raw_image/train/"
         validation_set_output_dir = "E:/plate_detect_data/raw_image/validation/"
 
