@@ -143,5 +143,5 @@ if __name__ == "__main__":
     reset_folder(train_set_output_dir)
     reset_folder(validation_set_output_dir)
 
-    generate_img_set(train_set_output_dir, 3000, real_resource_dir, world_resource_dir, negative_resource_dir)
-    generate_img_set(validation_set_output_dir ,3000, real_resource_dir, world_resource_dir, negative_resource_dir)
+    generate_img_set(train_set_output_dir, 10000, real_resource_dir, world_resource_dir, negative_resource_dir)
+    #generate_img_set(validation_set_output_dir ,3000, real_resource_dir, world_resource_dir, negative_resource_dir)

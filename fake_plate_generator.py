@@ -7,6 +7,7 @@ import numpy as np
 import cv2
 
 from img_utils import *
+from jittering_methods import *
 
 class FakePlateGenerator():
     def __init__(self, fake_resource_dir, plate_size):
@@ -101,3 +102,20 @@ class FakePlateGenerator():
         plate_img = cv2.resize(plate_img, self.dst_size, interpolation = cv2.INTER_AREA)
 
         return plate_img, plate_name
+
+if __name__ == "__main__":
+    fake_resource_dir  = sys.path[0] + "/fake_resource/" 
+    output_dir = sys.path[0] + "/test_plate/"
+    img_size = (100, 30)
+
+    fake_plate_generator = FakePlateGenerator(fake_resource_dir, img_size)
+    reset_folder(output_dir)
+
+    for i in range(0, 1000):
+        plate, plate_name = fake_plate_generator.generate_one_plate()
+        plate = jittering_color(plate)
+        plate = add_noise(plate)
+        plate = jittering_blur(plate)
+        plate = jittering_scale(plate)
+
+        save_random_img(output_dir, plate)
